@@ -11,14 +11,23 @@ export default function CalculateTheRate(){
     });
 
     const [resultData, setResultData] = useState([]);
-    const resultIsValid = resultData.duration >= 0; 
     const userInputContent = userInput;
 
+    // This function checks if the result is valid
+    function setResultIsValid(duration){
+        if(duration > 0 && resultData.length > 0){
+            return true;
+        }
+        return false;
+    }
+
+    // useEffect is a hook that allows you to perform side effects in function components
     useEffect(() => {
         const results = getResults();
         setResultData(results);
     }, [userInputContent]);
 
+    // This function updates the user input state
     function handleInputChange(inputField, event) {
         setUserInput({
             ...userInput,
@@ -26,9 +35,12 @@ export default function CalculateTheRate(){
         });
     }
 
+    // This function calculates the investment results
     function getResults() {
         const { initialInvestment, annualInvestment, expectedReturn, duration } = userInput;
-        if (!initialInvestment || !annualInvestment || !expectedReturn || !duration) return [];
+        if (!initialInvestment || !annualInvestment || !expectedReturn || duration <=0){
+            return [];
+        } 
         return calculateInvestmentResults({
             initialInvestment: +initialInvestment,
             annualInvestment: +annualInvestment,
@@ -59,7 +71,7 @@ export default function CalculateTheRate(){
                 </div>
             </div>
         </div>
-        { resultIsValid ? <Results resultData={resultData} /> : <p className="center">The result is not valid.</p>}
+        { setResultIsValid(userInputContent.duration) ? <Results resultData={resultData} /> : <p className="center">The result is not valid.</p>}
         </>
     )
 }
